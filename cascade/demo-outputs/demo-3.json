@@ -1,0 +1,66 @@
+{
+  "changed_symbols": [
+    {
+      "file": "services/billing/utils.ts",
+      "symbol": "calculateTax",
+      "kind": "function",
+      "old_sig": "function calculateTax(amount: number): number",
+      "new_sig": "function calculateTax(amount: number): number"
+    }
+  ],
+  "impacts": [
+    {
+      "file": "services/billing/checkout.ts",
+      "line": 18,
+      "symbol": "calculateTax",
+      "risk": "MEDIUM",
+      "reason": "Rounding behavior changed - test assertions may need updates",
+      "indirect": false
+    },
+    {
+      "file": "services/billing/invoice.ts",
+      "line": 16,
+      "symbol": "calculateTax",
+      "risk": "MEDIUM",
+      "reason": "Invoice totals now rounded - test assertions may need updates",
+      "indirect": false
+    }
+  ],
+  "missing_tests": [
+    {
+      "file": "services/billing/utils.ts",
+      "scenario": "calculateTax should round to 2 decimal places"
+    },
+    {
+      "file": "services/billing/utils.ts",
+      "scenario": "calculateTax should handle floating-point precision correctly"
+    },
+    {
+      "file": "services/billing/checkout.ts",
+      "scenario": "processCheckout should produce correctly rounded totals"
+    },
+    {
+      "file": "services/billing/invoice.ts",
+      "scenario": "generateInvoice should produce correctly rounded totals"
+    }
+  ],
+  "suggested_regression_tests": [
+    {
+      "path": "demo-monorepo/tests/regression/cascade-tax-rounding.spec.ts",
+      "code": "describe('calculateTax rounding', () => {\n  it('should round to 2 decimal places', () => {\n    const result = calculateTax(100.00);\n    expect(result).toBe(8.00);\n  });\n});"
+    },
+    {
+      "path": "demo-monorepo/tests/regression/cascade-tax-rounding.spec.ts",
+      "code": "describe('processCheckout with new rounding', () => {\n  it('should produce correctly rounded totals', async () => {\n    const validToken = 'valid.token.here';\n    const result = await processCheckout(validToken, 12.34);\n    expect(result.total).toBe(13.33);\n  });\n});"
+    }
+  ],
+  "summary": {
+    "overall_risk": "MEDIUM",
+    "files_affected": 2,
+    "cross_service": false,
+    "critical_impacts": 0,
+    "high_impacts": 0,
+    "medium_impacts": 2,
+    "low_impacts": 0
+  }
+}

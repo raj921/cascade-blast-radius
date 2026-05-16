@@ -1,0 +1,94 @@
+{
+  "changed_symbols": [
+    {
+      "file": "services/notifications/config.ts",
+      "symbol": "SMTP_HOST",
+      "kind": "constant",
+      "old_sig": "process.env.SMTP_SERVER",
+      "new_sig": "process.env.MAIL_HOST"
+    }
+  ],
+  "impacts": [
+    {
+      "file": "services/notifications/config.ts",
+      "line": 5,
+      "symbol": "SMTP_HOST",
+      "risk": "CRITICAL",
+      "reason": "Reads undefined environment variable - email service fails",
+      "indirect": false
+    },
+    {
+      "file": ".env",
+      "line": 6,
+      "symbol": "SMTP_SERVER",
+      "risk": "CRITICAL",
+      "reason": "Old variable name still defined - needs update to MAIL_HOST",
+      "indirect": true
+    },
+    {
+      "file": "docker-compose.yml",
+      "line": 29,
+      "symbol": "SMTP_SERVER",
+      "risk": "CRITICAL",
+      "reason": "Docker sets old variable name - container deployment fails",
+      "indirect": true
+    },
+    {
+      "file": "README.md",
+      "line": 0,
+      "symbol": "SMTP_SERVER",
+      "risk": "MEDIUM",
+      "reason": "Documentation may reference old variable name",
+      "indirect": true
+    },
+    {
+      "file": "CI/CD pipelines",
+      "line": 0,
+      "symbol": "SMTP_SERVER",
+      "risk": "CRITICAL",
+      "reason": "CI environment may set old variable name",
+      "indirect": true
+    },
+    {
+      "file": "Production environment",
+      "line": 0,
+      "symbol": "SMTP_SERVER",
+      "risk": "CRITICAL",
+      "reason": "Production servers have old variable configured",
+      "indirect": true
+    }
+  ],
+  "missing_tests": [
+    {
+      "file": "services/notifications/email.ts",
+      "scenario": "sendEmail should fail gracefully when SMTP_HOST is undefined"
+    },
+    {
+      "file": "services/notifications/config.ts",
+      "scenario": "config should validate all required environment variables are set"
+    },
+    {
+      "file": "services/notifications/email.ts",
+      "scenario": "sendEmail should throw descriptive error when email config is incomplete"
+    }
+  ],
+  "suggested_regression_tests": [
+    {
+      "path": "demo-monorepo/tests/regression/cascade-env-config.spec.ts",
+      "code": "describe('Email configuration validation', () => {\n  it('should throw error when MAIL_HOST is not set', () => {\n    delete process.env.MAIL_HOST;\n    expect(() => require('../services/notifications/config')).toThrow('MAIL_HOST environment variable is required');\n  });\n});"
+    },
+    {
+      "path": "demo-monorepo/tests/regression/cascade-env-config.spec.ts",
+      "code": "describe('Email service error handling', () => {\n  it('should throw descriptive error when SMTP_HOST is undefined', async () => {\n    process.env.MAIL_HOST = undefined;\n    await expect(sendEmail('test@example.com', 'Test', 'Body')).rejects.toThrow('Email configuration incomplete');\n  });\n});"
+    }
+  ],
+  "summary": {
+    "overall_risk": "CRITICAL",
+    "files_affected": 6,
+    "cross_service": false,
+    "critical_impacts": 5,
+    "high_impacts": 0,
+    "medium_impacts": 1,
+    "low_impacts": 0
+  }
+}

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  auth:
+    build: ./services/auth
+    ports:
+      - "3001:3000"
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRY=${JWT_EXPIRY}
+    networks:
+      - cascade-network
+
+  billing:
+    build: ./services/billing
+    ports:
+      - "3002:3000"
+    environment:
+      - AUTH_SERVICE_URL=http://auth:3000
+    depends_on:
+      - auth
+    networks:
+      - cascade-network
+
+  notifications:
+    build: ./services/notifications
+    ports:
+      - "3003:3000"
+    environment:
+      - SMTP_SERVER=${SMTP_SERVER}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+    networks:
+      - cascade-network
+
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - cascade-network
+
+networks:
+  cascade-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+
+# Made with Bob
