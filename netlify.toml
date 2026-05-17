@@ -1,0 +1,33 @@
+[build]
+  # Base directory for the Next.js frontend
+  base = "frontend"
+  
+  # Build command for Next.js
+  command = "npm run build"
+  
+  # Publish directory (Next.js output)
+  publish = ".next"
+  
+  # Functions directory (for serverless functions)
+  functions = "netlify/functions"
+
+[build.environment]
+  # Node version
+  NODE_VERSION = "20"
+  
+  # Next.js specific
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Redirect all requests to Next.js for client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
