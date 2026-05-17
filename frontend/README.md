@@ -144,6 +144,19 @@ filesystem for preset context and spawns the `bob` CLI. Deploy only to
 environments where Bob Shell is installed and authenticated (same host as
 Node).
 
+### Vercel (`404 NOT_FOUND`)
+
+1. **Settings → General → Root Directory:** `frontend`  
+2. **Settings → General → Output Directory:** leave **empty** (critical).  
+3. **Do not** add a `vercel.json` at the **Git repo root** when Root Directory is
+   `frontend` — Vercel can merge it and resolve the Next output from the wrong
+   folder → build log looks fine but every URL is **`404 NOT_FOUND`**.  
+   Use **`frontend/vercel.json`** in this repo (framework preset only).
+
+**Bob on Vercel:** serverless does not ship the `bob` binary — the UI and
+GitHub fetch work; live `/api/analyze` needs Bob on a host you control (e.g.
+local, VM, Docker) or a different deployment pattern.
+
 ## License
 
 MIT — see [LICENSE](../LICENSE).

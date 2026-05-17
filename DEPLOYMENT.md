@@ -27,8 +27,8 @@ Use these exact settings in Netlify:
 Add these in Netlify Dashboard → Site settings → Environment variables:
 
 ```bash
-# Required for live analysis
-BOBSHELL_API_KEY=bob_prod_bob-apikey_2AzbN8fRbDBx2MFECmxDpB2Zoxaf25rBEyLhEo9hXVvW5hAEBdzR4A76wL1mJ7b1YfPBQ4TEwNy48Njp4M2shxwC_3b8KJkp9HqwJGide6jNHM9KoubhrUNiy9x7Eb6fFxFzp
+# Required for live analysis (use your own key — never commit real keys to git)
+BOBSHELL_API_KEY=your_bob_inference_api_key_here
 
 # Optional (default 15 minutes)
 BOB_SHELL_TIMEOUT_MS=900000
@@ -109,14 +109,35 @@ After deployment:
 - Increase `BOB_SHELL_TIMEOUT_MS` to 1800000 (30 min)
 - Check Bob API key is valid
 
-### Alternative: Vercel Deployment
+### Vercel Deployment
 
-If you prefer Vercel:
+This repo’s Next.js app lives in **`frontend/`**. The repository root has **no**
+root `package.json`, so Vercel must be told where the app is. If you skip
+that, the build can finish in **~100ms with no `npm install` / `next build`**
+and every URL returns **`404 NOT_FOUND`**.
 
-1. Install Vercel CLI: `npm i -g vercel`
-2. Run: `cd frontend && vercel`
-3. Add environment variables in Vercel dashboard
-4. Deploy: `vercel --prod`
+Do **one** of the following (then redeploy):
+
+1. **Recommended — Root Directory in the dashboard**  
+   Vercel → Project → **Settings** → **General** → **Root Directory** → set to  
+   `frontend` → Save → **Redeploy**.
+
+2. **Or — use `frontend/vercel.json`** (next to `frontend/package.json`)  
+   It only pins `"framework": "nextjs"`. **Do not** keep a second `vercel.json`
+   at the **repository root** when Root Directory is `frontend` — Vercel can
+   merge the root file and look for `.next` in the wrong place, which produces
+   a successful build log but **`404 NOT_FOUND`** on every URL.
+
+Then add the same env vars in **Vercel → Settings → Environment Variables**
+(at least `BOBSHELL_API_KEY` if you want the server to see it; note that the
+`bob` CLI is **not** available on Vercel’s default serverless runtime, so
+live Bob analysis usually needs a different host or a custom image).
+
+CLI deploy (optional):
+
+```bash
+cd frontend && npx vercel
+```
 
 ### Local Development
 
