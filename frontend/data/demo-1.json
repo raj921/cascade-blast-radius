@@ -1,0 +1,82 @@
+{
+  "changed_symbols": [
+    {
+      "file": "services/auth/index.ts",
+      "symbol": "verifyToken",
+      "kind": "function",
+      "old_sig": "function verifyToken(token: string): boolean",
+      "new_sig": "function verifyToken(token: string): { valid: boolean; userId: string }"
+    }
+  ],
+  "impacts": [
+    {
+      "file": "services/billing/checkout.ts",
+      "line": 13,
+      "symbol": "verifyToken",
+      "risk": "CRITICAL",
+      "reason": "Boolean check on object always passes - authentication bypassed",
+      "indirect": false
+    },
+    {
+      "file": "services/billing/checkout.ts",
+      "line": 30,
+      "symbol": "verifyToken",
+      "risk": "CRITICAL",
+      "reason": "Boolean check on object always passes - payment validation bypassed",
+      "indirect": false
+    },
+    {
+      "file": "services/billing/invoice.ts",
+      "line": 11,
+      "symbol": "verifyToken",
+      "risk": "CRITICAL",
+      "reason": "Boolean check on object always passes - invoice authorization bypassed",
+      "indirect": false
+    },
+    {
+      "file": "services/auth/index.ts",
+      "line": 23,
+      "symbol": "verifyToken",
+      "risk": "HIGH",
+      "reason": "Boolean check on object always passes - token refresh always succeeds",
+      "indirect": false
+    }
+  ],
+  "missing_tests": [
+    {
+      "file": "services/billing/checkout.ts",
+      "scenario": "processCheckout with invalid token should throw error"
+    },
+    {
+      "file": "services/billing/checkout.ts",
+      "scenario": "validatePayment with invalid token should return false"
+    },
+    {
+      "file": "services/billing/invoice.ts",
+      "scenario": "generateInvoice with invalid token should throw error"
+    },
+    {
+      "file": "services/auth/index.ts",
+      "scenario": "refreshToken with invalid token should return null"
+    }
+  ],
+  "suggested_regression_tests": [
+    {
+      "path": "demo-monorepo/tests/regression/cascade-auth.spec.ts",
+      "code": "describe('processCheckout authentication', () => {\n  it('should reject invalid tokens', async () => {\n    const invalidToken = 'invalid';\n    await expect(processCheckout(invalidToken, 100)).rejects.toThrow('Invalid authentication token');\n  });\n});"
+    },
+    {
+      "path": "demo-monorepo/tests/regression/cascade-auth.spec.ts",
+      "code": "describe('validatePayment authentication', () => {\n  it('should return false for invalid tokens', () => {\n    const invalidToken = 'invalid';\n    const result = validatePayment(invalidToken, 'credit_card');\n    expect(result).toBe(false);\n  });\n});"
+    }
+  ],
+  "summary": {
+    "overall_risk": "CRITICAL",
+    "files_affected": 3,
+    "cross_service": true,
+    "critical_impacts": 3,
+    "high_impacts": 1,
+    "medium_impacts": 0,
+    "low_impacts": 0
+  }
+}

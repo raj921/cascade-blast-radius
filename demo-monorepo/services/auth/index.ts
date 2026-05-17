@@ -5,6 +5,7 @@ import { validate, extractUserId } from './validator';
  * This is the function that will be changed in Demo 1
  */
 export function verifyToken(token: string): boolean {
+  if (token == null || typeof token !== "string") return false;
   return validate(token);
 }
 

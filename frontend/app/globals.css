@@ -1,0 +1,300 @@
+@import "tailwindcss";
+
+/*
+  CASCADE — Industrial Observatory design system.
+  Slate near-black canvas, acid-lime primary, hazard-orange critical.
+  Hairline borders, sharp corners, tabular numerals, mono-first typography.
+*/
+
+@theme {
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
+    SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: "Instrument Serif", "EB Garamond", Georgia, serif;
+  --font-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-background: #0a0c0b;
+  --color-surface: #101413;
+  --color-surface-2: #161b19;
+  --color-foreground: #e9ece8;
+  --color-muted: #2a312d;
+  --color-muted-foreground: #8a938b;
+  --color-border: #232826;
+  --color-border-strong: #3a413c;
+
+  --color-primary: #c6ff00;
+  --color-primary-foreground: #0a0c0b;
+  --color-accent: #c6ff00;
+
+  --color-critical: #ff5b1f;
+  --color-critical-bg: rgba(255, 91, 31, 0.08);
+  --color-high: #ffb020;
+  --color-high-bg: rgba(255, 176, 32, 0.08);
+  --color-medium: #4cc9f0;
+  --color-medium-bg: rgba(76, 201, 240, 0.08);
+  --color-low: #84a98c;
+  --color-low-bg: rgba(132, 169, 140, 0.08);
+
+  --color-destructive: #ff5b1f;
+  --color-destructive-foreground: #0a0c0b;
+  --color-ring: #c6ff00;
+  --color-input: #161b19;
+
+  --radius: 0;
+  --grid-line: rgba(255, 255, 255, 0.02);
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-mono);
+    font-feature-settings: "tnum" 1, "ss01" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: -1px -1px;
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  ::selection {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+    border: 2px solid var(--color-background);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-border-strong);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  /* tabular figures everywhere a number lives */
+  .num,
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+}
+
+@layer components {
+  /* Corner-bracket frame — the signature visual motif */
+  .bracket-frame {
+    position: relative;
+  }
+  .bracket-frame::before,
+  .bracket-frame::after,
+  .bracket-frame > .bl,
+  .bracket-frame > .br {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--color-primary);
+    pointer-events: none;
+  }
+  .bracket-frame::before {
+    top: -1px;
+    left: -1px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .bracket-frame::after {
+    top: -1px;
+    right: -1px;
+    border-left: 0;
+    border-bottom: 0;
+  }
+  .bracket-frame > .bl {
+    bottom: -1px;
+    left: -1px;
+    border-right: 0;
+    border-top: 0;
+  }
+  .bracket-frame > .br {
+    bottom: -1px;
+    right: -1px;
+    border-left: 0;
+    border-top: 0;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-muted-foreground);
+  }
+
+  .hairline {
+    border-color: var(--color-border);
+  }
+  .hairline-strong {
+    border-color: var(--color-border-strong);
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.1rem 0.45rem;
+    font-size: 10px;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-muted-foreground);
+  }
+
+  .pill-live::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--color-primary);
+    border-radius: 999px;
+    box-shadow: 0 0 8px var(--color-primary);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+
+  .marquee-mask {
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 8%,
+      #000 92%,
+      transparent 100%
+    );
+  }
+
+  .risk-CRITICAL {
+    color: var(--color-critical);
+    background: var(--color-critical-bg);
+    border-color: var(--color-critical);
+  }
+  .risk-HIGH {
+    color: var(--color-high);
+    background: var(--color-high-bg);
+    border-color: var(--color-high);
+  }
+  .risk-MEDIUM {
+    color: var(--color-medium);
+    background: var(--color-medium-bg);
+    border-color: var(--color-medium);
+  }
+  .risk-LOW {
+    color: var(--color-low);
+    background: var(--color-low-bg);
+    border-color: var(--color-low);
+  }
+
+  /* Subtle scanline overlay used on the live telemetry panel */
+  .scanlines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(255, 255, 255, 0.012) 2px,
+      rgba(255, 255, 255, 0.012) 3px
+    );
+  }
+
+  .glow-lime {
+    box-shadow:
+      0 0 0 1px var(--color-primary) inset,
+      0 0 24px rgba(198, 255, 0, 0.18);
+  }
+
+  .ticker {
+    animation: tick 1.6s steps(3, end) infinite;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes tick {
+  0% {
+    content: "·  ";
+  }
+  33% {
+    content: "·· ";
+  }
+  66% {
+    content: "···";
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fade-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes draw-line {
+  from {
+    stroke-dashoffset: 100%;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes glitch {
+  0%,
+  100% {
+    text-shadow: none;
+  }
+  20% {
+    text-shadow: 1px 0 var(--color-critical), -1px 0 var(--color-medium);
+  }
+  40% {
+    text-shadow: -1px 0 var(--color-critical), 1px 0 var(--color-medium);
+  }
+}
+
+.glitch-on-hover:hover {
+  animation: glitch 0.36s steps(2, end) 1;
+}
