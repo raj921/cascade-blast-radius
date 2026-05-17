@@ -10,9 +10,9 @@ if (process.env.VERCEL !== "1" && fs.existsSync(parentEnv)) {
 }
 
 const nextConfig: NextConfig = {
-  // Pin tracing root to `frontend/` so Vercel doesn't try to trace from the
-  // repo root (otherwise it warns about a mismatched outputFileTracingRoot).
-  outputFileTracingRoot: path.resolve(__dirname),
+  // Leave outputFileTracingRoot unset. Vercel injects its own value via
+  // `Applying modifyConfig from Vercel`; setting it here breaks the deploy
+  // phase with ENOENT on .next/routes-manifest-deterministic.json.
   // Do not use `next.config.env` for BOBSHELL_API_KEY — that inlines values into the client bundle.
 };
 
