@@ -1,8 +1,0 @@
-{
-  "name": "cascade-blast-radius",
-  "private": true,
-  "workspaces": ["frontend"],
-  "scripts": {
-    "build": "npm run build --workspace=frontend"
-  }
-}

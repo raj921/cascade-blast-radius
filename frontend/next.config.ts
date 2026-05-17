@@ -10,9 +10,9 @@ if (process.env.VERCEL !== "1" && fs.existsSync(parentEnv)) {
 }
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    root: path.resolve(__dirname),
-  },
+  // Pin tracing root to `frontend/` so Vercel doesn't try to trace from the
+  // repo root (otherwise it warns about a mismatched outputFileTracingRoot).
+  outputFileTracingRoot: path.resolve(__dirname),
   // Do not use `next.config.env` for BOBSHELL_API_KEY — that inlines values into the client bundle.
 };
 
